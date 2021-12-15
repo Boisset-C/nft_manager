@@ -11,10 +11,10 @@ async function initializeApp() {
 
   alert("Cosme you have signed in.");
   const options = {
-    address: "0x532624731e6B0d19990994Be6422d92E29F2F025",
+    address: "0x61F3c00a76463c0a2fe6FEE6703819E7326B67e1",
     chain: "rinkeby",
   };
-  const NFTs = await Moralis.Web3API.token.getAllTokenIds(options);
+  let NFTs = await Moralis.Web3API.token.getAllTokenIds(options);
   console.log(NFTs);
 }
 
