@@ -1,6 +1,8 @@
 serverUrl = "https://zhisezdhydkc.usemoralis.com:2053/server";
+``;
 appId = "4sjtOap670Lbm0FTcdJ88Gse8zS0QnjoF0TW1CkS";
 Moralis.start({ serverUrl, appId });
+CONTRACT_ADDRESS = "0x61F3c00a76463c0a2fe6FEE6703819E7326B67e1";
 
 //fetching from each NFT the metadata
 function fetchNFTMetadata(NFTs) {
@@ -20,7 +22,19 @@ function fetchNFTMetadata(NFTs) {
         .then((res) => {
           nft.metadata = res;
         })
-        .then(() => {
+        .then((res) => {
+          const options = {
+            address: CONTRACT_ADDRESS,
+            token_id: id,
+            chain: "rinkeby",
+          };
+          return Moralis.Web3API.token.getTokenIdOwners(options);
+        })
+        .then((res) => {
+          nft.owners = [];
+          res.result.forEach((element) => {
+            nft.owners.push(element.ownerOf);
+          });
           return nft;
         })
     );
@@ -39,6 +53,8 @@ function renderInventory(NFTs) {
     <div class="card-body">
       <h5 class="card-title">${nft.metadata.name}</h5>
       <p class="card-text">${nft.metadata.description}</p>
+      <p class="card-text">Tokens in Circulation: ${nft.amount}</p>
+      <p class="card-text">Number of Owners: ${nft.owners.length}</p>
       <a href="#" class="btn btn-primary">Go somewhere</a>
   </div>
 </div
@@ -60,7 +76,7 @@ async function initializeApp() {
 
   alert("Cosme you have signed in.");
   const options = {
-    address: "0x61F3c00a76463c0a2fe6FEE6703819E7326B67e1",
+    address: CONTRACT_ADDRESS,
     chain: "rinkeby",
   };
   let NFTs = await Moralis.Web3API.token.getAllTokenIds(options); //grabbing nfts from contract address in options
